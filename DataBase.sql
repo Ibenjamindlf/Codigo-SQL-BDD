@@ -40,7 +40,6 @@ CREATE TABLE Ciudad (
     codigo INT UNIQUE NOT NULL,
     nombre VARCHAR(50) NOT NULL
 );
-
 CREATE TABLE Viaje (
     idViaje INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     fecha DATE NOT NULL, 
@@ -50,7 +49,7 @@ CREATE TABLE Viaje (
     idCiudadDesde INT UNSIGNED,
     idCiudadHacia INT UNSIGNED,
     FOREIGN KEY (idColectivo) REFERENCES Colectivo(idColectivo)
-        ON DELETE SET NULL
+        ON DELETE SET NULL -- poner restrict
         ON UPDATE RESTRICT,
     FOREIGN KEY (idPersonaChofer) REFERENCES Chofer(idPersona)
     ON DELETE RESTRICT
@@ -62,33 +61,33 @@ CREATE TABLE Viaje (
         ON DELETE RESTRICT
         ON UPDATE RESTRICT 
 );
-
 CREATE TABLE Pasaje (
     idPasaje  INT UNSIGNED PRIMARY KEY  AUTO_INCREMENT,
     fecha DATE NOT NULL,
     idPasajero INT UNSIGNED,
     idViaje INT UNSIGNED,
+    idAsiento INT UNSIGNED,
     FOREIGN KEY (idViaje) REFERENCES Viaje (idViaje)
         ON DELETE RESTRICT
         ON UPDATE RESTRICT,
     FOREIGN KEY (idPasajero) REFERENCES Pasajero (idPersona)
-        ON DELETE SET NULL
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT,
+    FOREIGN KEY (idAsiento) REFERENCES Asiento (idAsiento)
+        ON DELETE RESTRICT
         ON UPDATE RESTRICT
 );
 -- ASIENTO ( nro, lado, patenteColectivo, idPasajeAsignado)
 CREATE TABLE Asiento (
+    idAsiento INT UNSIGNED AUTO_INCREMENT,
     numero INT(11) NOT NULL,
     lado VARCHAR(10) NOT NULL,
     idColectivo INT(10) UNSIGNED DEFAULT NULL,
-    idPasajeAsignado INT(10) UNSIGNED DEFAULT NULL,
-    PRIMARY KEY (numero, lado, idColectivo),
-    UNIQUE KEY (idPasajeAsignado),
+    UNIQUE KEY (idAsiento),
+    PRIMARY KEY (numero,lado,idColectivo),
     FOREIGN KEY (idColectivo) REFERENCES Colectivo(idColectivo)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY (idPasajeAsignado) REFERENCES Pasaje(idPasaje)
         ON UPDATE CASCADE
-        ON DELETE SET NULL
 );
 -- PREFIERE (motivo, idPasajero, codigoCiudad )
 CREATE TABLE Prefiere (
